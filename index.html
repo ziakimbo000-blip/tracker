@@ -186,6 +186,8 @@
     <br>
     <button id="btn-connexion">Se connecter</button>
     <button id="btn-inscription">Créer un compte</button>
+        <br>
+    <button id="btn-oubli" type="button" style="background: none; border: none; color: #9db4e0; text-decoration: underline; padding: 8px 0;">Mot de passe oublié ?</button>
     <p id="message-erreur"></p>
   </div>
     <div id="ecran-tracker" style="display: none;">
@@ -220,8 +222,8 @@
     </div>
     <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
-    import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-auth.js";
-        import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-firestore.js";
+        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-auth.js";
+    import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-firestore.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyDqt5bYyBCVbg-BjI7k9g5zQ-nXly8XVDs",
@@ -378,6 +380,23 @@
 
     document.getElementById("btn-deconnexion").addEventListener("click", function() {
       signOut(auth);
+    });
+
+
+
+        document.getElementById("btn-oubli").addEventListener("click", function() {
+      const email = document.getElementById("email").value.trim();
+      if (email === "") {
+        afficherErreur("Écris d'abord ton e-mail dans la case ci-dessus.");
+        return;
+      }
+      sendPasswordResetEmail(auth, email)
+        .then(function() {
+          afficherErreur("Si ce compte existe, un e-mail de réinitialisation vient d'être envoyé. Pense à regarder tes spams.");
+        })
+        .catch(function(erreur) {
+          afficherErreur("Erreur : " + erreur.code);
+        });
     });
 
         onAuthStateChanged(auth, async function(utilisateur) {
