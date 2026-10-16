@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Mon tracker d'animés</title>
+  <style>
+       body {
+      font-family: Arial, sans-serif;
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 40px 30px;
+      background-color: #050b18;
+      color: white;
+    }
+
+    h1 {
+      font-size: 32px;
+      text-transform: uppercase;
+      border-bottom: 3px solid #1e3a6e;
+      padding-bottom: 10px;
+      margin-bottom: 24px;
+    } 
+
+    input, select {
+      background-color: #0d1a33;
+      color: white;
+      border: 1px solid #1e3a6e;
+      border-radius: 6px;
+      padding: 10px 12px;
+      margin: 4px 6px 4px 0;
+      font-size: 14px;
+    }
+
+    input:focus, select:focus {
+      outline: none;
+      border-color: #3b82f6;
+    }
+
+    button {
+      background-color: #12295a;
+      color: white;
+      border: 1px solid #1e3a6e;
+      border-radius: 6px;
+      padding: 10px 16px;
+      font-size: 13px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #1d4ed8;
+    }
+
+          h2 {
+      text-transform: uppercase;
+      font-size: 20px;
+      margin: 40px 0 12px 0;
+      border-bottom: 2px solid #1e3a6e;
+      padding-bottom: 8px;
+    }
+
+    .rangee {
+      display: flex;
+      gap: 16px;
+      overflow-x: auto;
+      padding-bottom: 12px;
+    }
+
+        .carte {
+      position: relative;
+      min-height: 150px;
+      border: 1px solid #1a2f5a;
+      border-radius: 10px;
+      padding: 16px;
+      background-color: #0a1428;
+      background-size: cover;
+      background-position: center;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      overflow: hidden;
+            min-width: 220px;
+      flex-shrink: 0;
+    }
+
+    .carte::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(5, 11, 24, 0.95) 0%, rgba(5, 11, 24, 0.5) 50%, rgba(5, 11, 24, 0.1) 100%);
+    }
+
+    .carte > * {
+      position: relative;
+    }
+
+    .carte h3 {
+      text-transform: uppercase;
+      font-size: 16px;
+      margin: 14px 0 6px 0;
+    }
+
+    .note {
+      color: #9db4e0;
+      margin: 0 0 14px 0;
+    }
+
+    .badge {
+      font-size: 11px;
+      font-weight: bold;
+      text-transform: uppercase;
+      padding: 4px 8px;
+      border-radius: 4px;
+      border: 1px solid #3b82f6;
+      background-color: #12295a;
+    }
+
+    .badge.en-cours { background-color: #7a4a00; border-color: orange; }
+    .badge.terminé { background-color: #0d4a2a; border-color: limegreen; }
+    .badge.à-voir { background-color: #12295a; border-color: #3b82f6; }
+
+    .carte button {
+      font-size: 12px;
+      padding: 6px 10px;
+      margin-right: 4px;
+    }      
+
+        #bandeau {
+      position: relative;
+      min-height: 280px;
+      border: 1px solid #1a2f5a;
+      border-radius: 10px;
+      background-color: #0a1428;
+      background-size: cover;
+      background-position: center 20%;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 30px;
+      margin-bottom: 24px;
+      overflow: hidden;
+    }
+
+    #bandeau::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to right, rgba(5, 11, 24, 0.95) 0%, rgba(5, 11, 24, 0.4) 60%, rgba(5, 11, 24, 0.1) 100%);
+    }
+
+    #bandeau > * {
+      position: relative;
+      align-self: flex-start;
+    }
+
+    .bandeau-titre {
+      font-size: 44px;
+      font-weight: 900;
+      text-transform: uppercase;
+      margin: 12px 0 4px 0;
+    }
+        #ecran-connexion {
+      max-width: 400px;
+      margin: 60px auto;
+    }
+
+    #ecran-connexion input {
+      width: 100%;
+      box-sizing: border-box;
+      margin-bottom: 10px;
+    }
+
+    #message-erreur {
+      color: #ff6b6b;
+    }
+
+    
+  </style>
+</head>
+<body>
+    <h1>Mon tracker d'animés</h1>
+      <div id="ecran-connexion">
+    <h2>Connexion</h2>
+    <input type="email" id="email" placeholder="Adresse e-mail">
+    <input type="password" id="mdp" placeholder="Mot de passe (6 caractères min.)">
+    <br>
+    <button id="btn-connexion">Se connecter</button>
+    <button id="btn-inscription">Créer un compte</button>
+    <p id="message-erreur"></p>
+  </div>
+    <div id="ecran-tracker" style="display: none;">
+    <button id="btn-deconnexion">Se déconnecter</button>
+        
+      <div id="bandeau"></div>
+      <input type="text" id="titre" placeholder="Titre de l'animé">
+        <input type="number" id="note" min="0" max="10" placeholder="Note /10">
+         <select id="statut">
+    <option value="en cours">En cours</option>
+    <option value="terminé">Terminé</option>
+    <option value="à voir">À voir</option>
+  </select>
+  <input type="text" id="image" placeholder="Lien de l'image (affiche)">
+  </select>
+    <button onclick="ajouterAnime()">Ajouter</button>
+      <br>
+  <input type="text" id="recherche" placeholder="Rechercher..." oninput="afficher()">
+    
+  </select>
+        <h2>🏆 Top 5</h2>
+  <div id="top5" class="rangee"></div>
+
+  <h2>En cours</h2>
+  <div id="liste-en-cours" class="rangee"></div>
+
+  <h2>Terminé</h2>
+  <div id="liste-termine" class="rangee"></div>
+
+  <h2>À voir</h2>
+  <div id="liste-a-voir" class="rangee"></div>
+    </div>
+    <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
+    import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-auth.js";
+        import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDqt5bYyBCVbg-BjI7k9g5zQ-nXly8XVDs",
+      authDomain: "tracker-animes.firebaseapp.com",
+      projectId: "tracker-animes",
+      storageBucket: "tracker-animes.firebasestorage.app",
+      messagingSenderId: "192771273622",
+      appId: "1:192771273622:web:2ebce0804ce21d60e7a3b7"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+                let animes = [];
+    let utilisateurActuel = null;
+
+        function sauvegarder() {
+      if (!utilisateurActuel) return;
+      setDoc(doc(db, "utilisateurs", utilisateurActuel.uid), { animes: animes })
+        .catch(function(erreur) {
+          alert("Erreur de sauvegarde : " + erreur.code);
+        });
+    }
+
+            function ajouterAnime() {
+      const titre = document.getElementById("titre").value.trim();
+      const note = document.getElementById("note").value || 0;
+      const statut = document.getElementById("statut").value;
+      const image = document.getElementById("image").value;
+
+      if (titre === "") {
+        alert("Entre un titre.");
+        return;
+      }
+
+      animes.push({ titre: titre, note: note, statut: statut, image: image });
+            sauvegarder();
+
+      document.getElementById("titre").value = "";
+      document.getElementById("note").value = "";
+      document.getElementById("image").value = "";
+
+      afficher();
+    }
+            function carteHTML(anime, index) {
+      return '<div class="carte"' + (anime.image ? ' style="background-image: url(\'' + anime.image + '\')"' : '') + '>' +
+        '<span class="badge ' + anime.statut.replace(" ", "-") + '">' + anime.statut + '</span>' +
+        '<h3>' + anime.titre + '</h3>' +
+        '<p class="note">' + anime.note + '/10</p>' +
+        '<button onclick="changerStatut(' + index + ')">Statut ▸</button>' +
+        '<button onclick="modifierNote(' + index + ')">Modifier</button>' +
+        '<button onclick="supprimerAnime(' + index + ')">Supprimer</button>' +
+      '</div>';
+    }
+
+    function afficher() {
+      const recherche = document.getElementById("recherche").value.toLowerCase();
+      const top5 = document.getElementById("top5");
+      const enCours = document.getElementById("liste-en-cours");
+      const termine = document.getElementById("liste-termine");
+      const aVoir = document.getElementById("liste-a-voir");
+
+      top5.innerHTML = "";
+      enCours.innerHTML = "";
+      termine.innerHTML = "";
+      aVoir.innerHTML = "";
+
+      // Les 3 catégories (avec la recherche)
+      animes.forEach(function(anime, index) {
+        if (!anime.titre.toLowerCase().includes(recherche)) return;
+        const carte = carteHTML(anime, index);
+        if (anime.statut === "en cours") enCours.innerHTML += carte;
+        if (anime.statut === "terminé") termine.innerHTML += carte;
+        if (anime.statut === "à voir") aVoir.innerHTML += carte;
+      });
+
+      // Le Top 5 : les 5 meilleures notes
+      const classement = animes
+        .map(function(anime, index) { return { anime: anime, index: index }; })
+        .sort(function(a, b) { return Number(b.anime.note) - Number(a.anime.note); })
+        .slice(0, 5);
+
+      classement.forEach(function(element) {
+        top5.innerHTML += carteHTML(element.anime, element.index);
+      });
+
+            // Le bandeau : l'animé avec la meilleure note
+      const bandeau = document.getElementById("bandeau");
+      if (animes.length === 0) {
+        bandeau.style.display = "none";
+      } else {
+        const meilleur = animes.slice().sort(function(a, b) {
+          return Number(b.note) - Number(a.note);
+        })[0];
+        bandeau.style.display = "flex";
+        bandeau.style.backgroundImage = meilleur.image ? "url('" + meilleur.image + "')" : "none";
+        bandeau.innerHTML =
+          '<span class="badge">⭐ Mon préféré</span>' +
+          '<p class="bandeau-titre">' + meilleur.titre + '</p>' +
+          '<p class="note">' + meilleur.note + '/10</p>';
+      }
+    }
+        function supprimerAnime(index) {
+      animes.splice(index, 1);
+            sauvegarder();
+      afficher();
+    }   
+    
+        function changerStatut(index) {
+      const ordre = ["à voir", "en cours", "terminé"];
+      const position = ordre.indexOf(animes[index].statut);
+      animes[index].statut = ordre[(position + 1) % ordre.length];
+           sauvegarder();
+      afficher();
+    }
+
+
+        function modifierNote(index) {
+      const nouvelleNote = prompt("Nouvelle note (0 à 10) :");
+            if (nouvelleNote === null || nouvelleNote === "") return;
+      const nombre = Number(nouvelleNote);
+      if (isNaN(nombre) || nombre < 0 || nombre > 10) {
+        alert("Entre un nombre entre 0 et 10.");
+        return;
+      }
+            animes[index].note = nombre;
+            sauvegarder();
+      afficher();
+    }
+    
+
+        function afficherErreur(texte) {
+      document.getElementById("message-erreur").textContent = texte;
+    }
+
+    document.getElementById("btn-inscription").addEventListener("click", function() {
+      const email = document.getElementById("email").value;
+      const mdp = document.getElementById("mdp").value;
+      afficherErreur("");
+      createUserWithEmailAndPassword(auth, email, mdp).catch(function(erreur) {
+        afficherErreur("Erreur : " + erreur.code);
+      });
+    });
+
+    document.getElementById("btn-connexion").addEventListener("click", function() {
+      const email = document.getElementById("email").value;
+      const mdp = document.getElementById("mdp").value;
+      afficherErreur("");
+      signInWithEmailAndPassword(auth, email, mdp).catch(function(erreur) {
+        afficherErreur("Erreur : " + erreur.code);
+      });
+    });
+
+    document.getElementById("btn-deconnexion").addEventListener("click", function() {
+      signOut(auth);
+    });
+
+        onAuthStateChanged(auth, async function(utilisateur) {
+      utilisateurActuel = utilisateur;
+      if (utilisateur) {
+        document.getElementById("ecran-connexion").style.display = "none";
+        document.getElementById("ecran-tracker").style.display = "block";
+        const resultat = await getDoc(doc(db, "utilisateurs", utilisateur.uid));
+        animes = resultat.exists() ? resultat.data().animes : [];
+        afficher();
+      } else {
+        animes = [];
+        afficher();
+        document.getElementById("ecran-connexion").style.display = "block";
+        document.getElementById("ecran-tracker").style.display = "none";
+      }
+    });
+
+    window.ajouterAnime = ajouterAnime;
+    window.supprimerAnime = supprimerAnime;
+    window.modifierNote = modifierNote;
+    window.changerStatut = changerStatut;
+    window.afficher = afficher;
+  </script>
+</body>
+</html>
